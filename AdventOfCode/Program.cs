@@ -6,20 +6,24 @@ using Microsoft.Extensions.Configuration;
 
 
 var config = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
+    .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddCommandLine(args)
     .Build();
 
 var sessionCookie = config["Session"] ?? throw new InvalidOperationException("Session cookie not set.");
 var inputFetcher = new InputFetcher(sessionCookie);
 
-if (args.Length == 0)
+
+var dayInput = config["day"];
+
+if (dayInput == null)
 {
     await RunAllDays();
     return;
 }
 
-int dayNumber = int.Parse(args[0]);
+if (!int.TryParse(dayInput, out int dayNumber)) throw new ArgumentException("Invalid day value.");
 var dayImplementation = GetAllDays().FirstOrDefault(d => d.DayNumber == dayNumber);
 if (dayImplementation is null)
 {
