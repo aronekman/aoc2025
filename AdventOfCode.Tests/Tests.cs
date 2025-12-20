@@ -5,20 +5,23 @@ public static class ExampleCases
     public static TheoryData<int, string> Part1 => new()
     {
         { 1, "3" },
-        { 2, "1227775554" }
+        { 2, "1227775554" },
+        { 3, "357" }
     };
+
 
     public static TheoryData<int, string> Part2 => new()
     {
         { 1, "6" },
-        { 2, "4174379265" }
+        { 2, "4174379265" },
+        { 3, "3121910778619" }
     };
 
 
     public class Tests
     {
         [Theory]
-        [MemberData(nameof(ExampleCases.Part1), MemberType = typeof(ExampleCases))]
+        [MemberData(nameof(Part1), MemberType = typeof(ExampleCases))]
         public void Part1_Examples(int day, string expected)
         {
             var input = Helpers.LoadExampleInput(day);
@@ -30,7 +33,7 @@ public static class ExampleCases
         }
 
         [Theory]
-        [MemberData(nameof(ExampleCases.Part2), MemberType = typeof(ExampleCases))]
+        [MemberData(nameof(Part2), MemberType = typeof(ExampleCases))]
         public void Part2_Examples(int day, string expected)
         {
             var input = Helpers.LoadExampleInput(day);
