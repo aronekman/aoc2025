@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using AdventOfCode;
 using Microsoft.Extensions.Configuration;
@@ -74,8 +75,8 @@ static (T Result, TimeSpan Elapsed) Measure<T>(Func<string, T> action, string in
 
 string GetExecutiontime(TimeSpan delta)
 {
-    if (delta.TotalSeconds < 1) return $"{delta.TotalMilliseconds:F3}ms";
-    if (delta.TotalMinutes < 1) return $"{delta.TotalSeconds:F3}s";
-    return $"{delta.TotalMinutes:F3}m";
+    if (delta.TotalSeconds < 1) return delta.TotalMilliseconds.ToString("F3", CultureInfo.InvariantCulture) + "ms";
+    if (delta.TotalMinutes < 1) return delta.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture) + "s";
+    return delta.TotalMinutes.ToString("F3", CultureInfo.InvariantCulture) + "m";
 }
 
