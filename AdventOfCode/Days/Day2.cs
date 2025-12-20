@@ -45,11 +45,18 @@ public class Day2 : IDay
                 for (var chunkSize = 1; chunkSize <= text.Length / 2; chunkSize++)
                 {
                     if (text.Length % chunkSize != 0) continue;
-                    var size = chunkSize;
-                    var parts = Enumerable.Range(0, text.Length / chunkSize)
-                        .Select(i => text.Substring(i * size, size));
-                    if (parts.Distinct().Count() != 1) continue;
+                    var first = text[..chunkSize].AsSpan();
+                    var incorrect = true;
+                    for (var i = 0; i < text.Length; i += chunkSize)
+                    {
+                        if (text.AsSpan(i, chunkSize).SequenceEqual(first)) continue;
+                        incorrect = false;
+                        break;
+                    }
+
+                    if (!incorrect) continue;
                     incorrectIds.Add(cur);
+                    break;
                 }
 
                 cur++;

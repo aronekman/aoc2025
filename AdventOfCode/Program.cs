@@ -1,5 +1,4 @@
-﻿
-
+﻿using System.Diagnostics;
 using System.Reflection;
 using AdventOfCode;
 using Microsoft.Extensions.Configuration;
@@ -38,16 +37,23 @@ async Task RunSingleDay(IDay day)
 {
     var input = await inputFetcher.GetInputAsync(day.DayNumber);
     Console.WriteLine($"\n=== Day {day.DayNumber:00} ===");
-    Console.WriteLine($"Part 1: {day.Part1(input)}");
-    Console.WriteLine($"Part 2: {day.Part2(input)}");
+    var (part1, t1) = Measure(day.Part1, input);
+    Console.WriteLine($"Part 1: {part1} ({GetExecutiontime(t1)})");
+    var (part2, t2) = Measure(day.Part2, input);
+    Console.WriteLine($"Part 2: {part2} ({GetExecutiontime(t2)})");
 }
+
 
 async Task RunAllDays()
 {
-    foreach (var day in GetAllDays().OrderBy(d => d.DayNumber))
+    var startTime = Stopwatch.GetTimestamp();
+    foreach (var puzzleDay in GetAllDays().OrderBy(d => d.DayNumber))
     {
-        await RunSingleDay(day);
+        await RunSingleDay(puzzleDay);
     }
+
+    var delta = Stopwatch.GetElapsedTime(startTime);
+    Console.WriteLine($"\nTotal Time: {GetExecutiontime(delta)}");
 }
 
 IEnumerable<IDay> GetAllDays()
@@ -57,3 +63,19 @@ IEnumerable<IDay> GetAllDays()
         .Where(t => typeof(IDay).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false })
         .Select(t => (IDay)Activator.CreateInstance(t)!);
 }
+
+static (T Result, TimeSpan Elapsed) Measure<T>(Func<string, T> action, string input)
+{
+    var startTime = Stopwatch.GetTimestamp();
+    var result = action(input);
+    return (result, Stopwatch.GetElapsedTime(startTime));
+}
+
+
+string GetExecutiontime(TimeSpan delta)
+{
+    if (delta.TotalSeconds < 1) return $"{delta.TotalMilliseconds:F3}ms";
+    if (delta.TotalMinutes < 1) return $"{delta.TotalSeconds:F3}s";
+    return $"{delta.TotalMinutes:F3}m";
+}
+
